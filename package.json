@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-deepseek-balance",
+  "version": "0.2.0",
+  "description": "DeepSeek balance and peak/off-peak pricing in your OpenCode TUI sidebar.",
+  "type": "module",
+  "license": "MIT",
+  "author": "MiloTheDev (https://github.com/mil0thedev)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mil0thedev/opencode-deepseek-balance.git"
+  },
+  "homepage": "https://github.com/mil0thedev/opencode-deepseek-balance#readme",
+  "bugs": {
+    "url": "https://github.com/mil0thedev/opencode-deepseek-balance/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opencode-tui-plugin",
+    "deepseek",
+    "balance",
+    "tui"
+  ],
+  "exports": {
+    "./tui": "./dist/tui.js"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "README.es.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "opencode": "^1.19.0"
+  },
+  "scripts": {
+    "build": "babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/peak.test.ts test/version.test.ts",
+    "prepack": "npm run build",
+    "check": "npm run typecheck && npm test && npm run build"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.28.0",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-typescript": "^7.27.1",
+    "@opencode-ai/plugin": "^1.19.4",
+    "@opentui/core": "0.4.5",
+    "@opentui/keymap": "0.4.5",
+    "@opentui/solid": "0.4.5",
+    "@types/node": "^24.0.0",
+    "babel-preset-solid": "1.9.12",
+    "solid-js": "1.9.12",
+    "typescript": "^5.8.2"
+  }
+}

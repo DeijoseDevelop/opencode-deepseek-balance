@@ -135,7 +135,8 @@ export function formatChangeTime(date, from = new Date(), options = {}) {
     timeZone: options.timeZone,
     weekday: sameDay ? undefined : "short",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    hour12: false
   }).format(date);
 }
 //# sourceMappingURL=peak.js.map

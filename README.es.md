@@ -25,12 +25,13 @@ La fila de precio sigue las ventanas UTC de DeepSeek: `01:00–04:00` y `06:00�
 ## Vista previa
 
 ```text
-DeepSeek Usage   updated 12s ago
-DeepSeek         $9.98
-Off-peak         50% off · peak in 3h 03m · 21:30
+DeepSeek Usage 0.3.0
+DeepSeek   $9.98
+Off-peak   50% off
+→ Peak     3h 03m · 21:30
 ```
 
-La fila `Peak` / `Off-peak` / `Holiday` muestra la ventana de facturación vigente, cuánto falta para el próximo cambio y la hora local de ese cambio.
+La fila `Peak` / `Off-peak` / `Holiday` muestra la ventana de facturación vigente y su tarifa. La fila `→` muestra la próxima ventana, cuánto falta para el cambio y la hora local de ese cambio en formato de 24 horas.
 
 ## Características
 
@@ -42,7 +43,7 @@ La fila `Peak` / `Off-peak` / `Holiday` muestra la ventana de facturación vigen
 - Timeout de cinco segundos, cancelación al desactivar el plugin y una sola petición en vuelo a la vez.
 - Backoff exponencial con jitter para fallos transitorios y soporte de `Retry-After` para límites de tasa.
 - Actualización automática cada 60 segundos y al quedar inactiva la sesión.
-- Se leen todas las entradas de `balance_infos`; la barra lateral muestra la primera y el desglose completo queda listo para el panel de la V2 en [`MEJORAS.md`](MEJORAS.md).
+- Se leen todas las entradas de `balance_infos`; la barra lateral muestra la primera y el desglose completo queda listo para el panel de la V2 en [`FUTURES.es.md`](FUTURES.es.md).
 
 ## Instalación
 
@@ -90,7 +91,7 @@ Si aparece el aviso del calendario, actualiza el plugin para obtener las fechas 
 
 ## Roadmap
 
-El checklist completo de la V2 — correcciones ya implementadas, features en evaluación, arquitectura y migración a OpenCode V2 — está en [`MEJORAS.md`](MEJORAS.md).
+El checklist completo de la V2 — correcciones ya implementadas, features en evaluación, arquitectura y migración a OpenCode V2 — está en [`FUTURES.es.md`](FUTURES.es.md).
 
 Próximas metas:
 

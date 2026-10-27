@@ -25,12 +25,13 @@ The pricing row follows DeepSeek's UTC billing windows: `01:00–04:00` and `06:
 ## Preview
 
 ```text
-DeepSeek Usage   updated 12s ago
-DeepSeek         $9.98
-Off-peak         50% off · peak in 3h 03m · 21:30
+DeepSeek Usage 0.3.0
+DeepSeek   $9.98
+Off-peak   50% off
+→ Peak     3h 03m · 21:30
 ```
 
-The `Peak` / `Off-peak` / `Holiday` row shows the current billing window, how long is left until it changes, and the local time of the next change.
+The `Peak` / `Off-peak` / `Holiday` row shows the current billing window and its rate. The `→` row shows the next window, how long is left until it changes, and the local time of that change in 24-hour format.
 
 ## Features
 
@@ -42,7 +43,7 @@ The `Peak` / `Off-peak` / `Holiday` row shows the current billing window, how lo
 - Five-second request timeout, abort on plugin disposal, and one in-flight request at a time.
 - Exponential backoff with jitter for transient failures and `Retry-After` support for rate limits.
 - Automatic refresh every 60 seconds and after a session goes idle.
-- All `balance_infos` entries are parsed; the sidebar shows the first one and the full breakdown is ready for the dashboard work in [`MEJORAS.md`](MEJORAS.md).
+- All `balance_infos` entries are parsed; the sidebar shows the first one and the full breakdown is ready for the dashboard work in [`FUTURES.md`](FUTURES.md).
 
 ## Install
 
@@ -90,7 +91,7 @@ If the calendar warning appears, update the plugin to get the latest dates. The 
 
 ## Roadmap
 
-The full V2 checklist — fixes already implemented, features under consideration, architecture work, and the OpenCode V2 migration — is in [`MEJORAS.md`](MEJORAS.md).
+The full V2 checklist — fixes already implemented, features under consideration, architecture work, and the OpenCode V2 migration — is in [`FUTURES.md`](FUTURES.md).
 
 Next goals:
 

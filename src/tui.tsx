@@ -21,11 +21,13 @@ import {
   nextPeakChange,
 } from "./peak.js"
 import { retryDelay } from "./retry.js"
+import { readPluginVersion } from "./version.js"
 
 const REFRESH_MS = 60_000
 const REFRESH_JITTER_MS = 5_000
 const CLOCK_MS = 30_000
 const CACHE_KEY = "opencode-deepseek-balance.balance"
+const LABEL_WIDTH = 10
 
 type ViewState =
   | { status: "loading" }
@@ -60,6 +62,7 @@ function errorLabel(error: BalanceError): string {
 }
 
 const tui = async (api: TuiPluginApi) => {
+  const version = readPluginVersion()
   let cached: unknown
   try {
     cached = api.kv.get<unknown>(CACHE_KEY)
@@ -214,7 +217,7 @@ const tui = async (api: TuiPluginApi) => {
           if (current.status === "stale") {
             return current.error ? `${errorLabel(current.error)} · ${age}` : `cached · ${age}`
           }
-          return `updated ${age}`
+          return version ? `${version}` : `updated ${age}`
         }
 
         const balanceText = () => {
@@ -242,15 +245,20 @@ const tui = async (api: TuiPluginApi) => {
           if (billing() === "holiday") return holiday()?.provisional ? "Holiday*" : "Holiday"
           return "Off-peak"
         }
-        const peakColor = () =>
-          billing() === "peak" ? api.theme.current.warning : api.theme.current.success
+        const peakColor = () => billing() === "peak" ? api.theme.current.warning : api.theme.current.success
         const price = () => {
           const mode = billing()
-          const base = mode === "peak" ? "2× rate" : mode === "holiday" ? "off-peak all day" : "50% off"
+          return mode === "peak" ? "2× rate" : mode === "holiday" ? "off-peak all day" : "50% off"
+        }
+        const next = () => {
           const change = nextPeakChange(now())
-          if (!change) return base
-          const target = billingState(change) === "peak" ? "peak" : "off-peak"
-          return `${base} · ${target} in ${countdown(change, now())} · ${formatChangeTime(change, now())}`
+          if (!change) return undefined
+          const peak = billingState(change) === "peak"
+          return {
+            label: peak ? "→ Peak" : "→ Off-peak",
+            color: peak ? api.theme.current.warning : api.theme.current.success,
+            detail: `${countdown(change, now())} · ${formatChangeTime(change, now())}`,
+          }
         }
         const calendarNote = () => {
           const status = holidayCalendarStatus(now())
@@ -270,13 +278,29 @@ const tui = async (api: TuiPluginApi) => {
               </text>
             </box>
             <box flexDirection="row" gap={1} flexShrink={0}>
-              <text fg={api.theme.current.textMuted}>DeepSeek</text>
+              <text fg={api.theme.current.textMuted} width={LABEL_WIDTH}>
+                DeepSeek
+              </text>
               <text fg={balanceColor()}>{balanceText()}</text>
             </box>
             <box flexDirection="row" gap={1} flexShrink={0}>
-              <text fg={peakColor()}>{peakLabel()}</text>
+              <text fg={peakColor()} width={LABEL_WIDTH}>
+                {peakLabel()}
+              </text>
               <text fg={api.theme.current.textMuted}>{price()}</text>
             </box>
+            {(() => {
+              const change = next()
+              if (!change) return null
+              return (
+                <box flexDirection="row" gap={1} flexShrink={0}>
+                  <text fg={change.color} width={LABEL_WIDTH}>
+                    {change.label}
+                  </text>
+                  <text fg={api.theme.current.textMuted}>{change.detail}</text>
+                </box>
+              )
+            })()}
             {calendarNote() ? (
               <text fg={api.theme.current.warning} opacity={0.8}>
                 {calendarNote()}

@@ -1,4 +1,4 @@
-# Mejoras para la V2
+# Futuros del plugin
 
 Documento de trabajo de `opencode-deepseek-balance`. La visión es pasar de un widget de saldo a un **centro de control de gasto DeepSeek**: saldo, tendencia, gasto por sesión, presupuesto, feriados y alertas.
 
@@ -7,6 +7,8 @@ Documento de trabajo de `opencode-deepseek-balance`. La visión es pasar de un w
 - Alcance de esta entrega: correcciones de precisión, robustez, empaquetado y pruebas.
 - Las features de producto quedan documentadas y marcadas como pendientes.
 - Leyenda: `[x]` implementado, `[ ]` pendiente.
+
+**Visión de compatibilidad.** El plugin debe ser compatible con OpenCode 1.x y con OpenCode 2.x durante un lapso de tiempo corto: un solo código que funcione en ambas líneas durante una ventana breve de transición, en lugar de dos releases divergentes de forma permanente.
 
 ## 1. Correcciones implementadas
 
@@ -28,7 +30,7 @@ Documento de trabajo de `opencode-deepseek-balance`. La visión es pasar de un w
 
 - [x] **Último saldo persistido.** El saldo y su timestamp se guardan en `api.kv`; al abrir OpenCode se muestra inmediatamente como dato cacheado.
 - [x] **No se pierde el saldo ante un fallo de red.** Si ya había un saldo, se conserva con un estado `stale` y su antigüedad.
-- [x] **Edad del dato.** La cabecera muestra `updated 12s ago`, `cached · 2m ago` o el error actual.
+- [x] **Versión y edad del dato.** La cabecera muestra la versión del plugin; en estado `stale` añade `cached · 2m ago` o el error actual.
 - [x] **Errores tipados.** `BalanceError` distingue `no-key`, `unauthorized`, `insufficient`, `rate-limited`, `network`, `timeout`, `server`, `http`, `invalid-response` y `aborted`.
 - [x] **Etiquetas claras en la UI.** `no key`, `invalid key`, `insufficient`, `rate limited`, `network error`, `timeout`, `API error`, `bad response`.
 - [x] **Estado `insufficient`.** Se usa `is_available` de la API y se muestra `insufficient` cuando el saldo no cubre llamadas.
@@ -56,9 +58,10 @@ Documento de trabajo de `opencode-deepseek-balance`. La visión es pasar de un w
 ### UI y copy
 
 - [x] **Capitalización correcta.** `Deepseek` → `DeepSeek`.
-- [x] **Versión fuera del footer.** Se libera espacio; la versión queda para el futuro panel.
-- [x] **Última actualización visible.**
-- [x] **Copy de precio claro.** `Peak · 2× rate · off-peak in 45m · 21:30` y `Off-peak · 50% off · peak in 3h 03m · 21:30`.
+- [x] **Versión en la cabecera.** La versión del plugin sustituye a la edad del dato cuando el saldo está fresco.
+- [x] **Última actualización visible.** En estado `stale` la antigüedad sigue visible junto al aviso.
+- [x] **Columna de etiquetas fija.** Las etiquetas comparten una columna de 10 celdas para que todos los valores empiecen en la misma posición.
+- [x] **Copy de precio claro.** La fila actual muestra `Peak` + `2× rate` u `Off-peak` + `50% off`; la fila `→` muestra `3h 03m · 21:30`.
 - [x] **Estado de feriado visible.** `Holiday` / `Holiday*`.
 - [x] **Colores semánticos.** Verde para valle, amarillo para pico, rojo para error, gris para stale.
 - [x] **Sin depender solo del color.** Pico, valle, feriado, errores y antigüedad tienen texto explícito.
@@ -206,7 +209,9 @@ Documento de trabajo de `opencode-deepseek-balance`. La visión es pasar de un w
 
 El repo usa `@opencode-ai/plugin@1.19.4` y OpenTUI `0.4.5`. OpenCode V2 usa `@opencode/plugin@2.x` y OpenTUI `>=0.6.8`.
 
-- [ ] Decidir si la V2 del plugin mantiene OpenCode 1.19, salta a OpenCode V2 o publica dos líneas.
+**Enfoque de compatibilidad.** La visión del plugin es ser compatible con OpenCode 1.x y OpenCode 2.x a la vez durante un lapso de tiempo corto. Es una ventana de transición, no un compromiso permanente: cuando la API V2 sea estable, V2 pasa a ser el objetivo principal y se retira el soporte de 1.x.
+
+- [ ] Mantener compatibilidad dual con OpenCode 1.x y 2.x durante un periodo corto de transición.
 - [ ] Migrar `TuiPluginApi` a `Context` + `Plugin.define`.
 - [ ] Migrar `api.slots.register` a `context.ui.slot`.
 - [ ] Migrar `api.event.on` a `context.data.on`.
@@ -219,7 +224,7 @@ El repo usa `@opencode-ai/plugin@1.19.4` y OpenTUI `0.4.5`. OpenCode V2 usa `@op
 - [ ] Añadir entrypoint principal `"."` además de `"./tui"`.
 - [ ] Añadir el entrypoint de servidor si se implementa el tool del agente.
 - [ ] Actualizar `engines.opencode` y las peer dependencies.
-- [ ] Publicar una major separada y mantener una rama 1.x si hace falta.
+- [ ] Publicar una major separada y mantener una rama 1.x solo si la transición lo exige.
 
 ## 5. Roadmap orientativo
 
@@ -321,4 +326,4 @@ Resultado de esta entrega:
 - [ ] Feriados oficiales del año en curso.
 - [ ] Tests de UI y de integración.
 - [ ] README con configuración y capturas actualizadas.
-- [ ] Migración a OpenCode V2 decidida e implementada, si aplica.
+- [ ] Compatibilidad con OpenCode 1.x y 2.x verificada de extremo a extremo durante la ventana de transición, y luego retirada la de 1.x cuando V2 sea estable.

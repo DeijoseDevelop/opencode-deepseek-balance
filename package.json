@@ -31,7 +31,8 @@
     "assets",
     "README.md",
     "README.es.md",
-    "MEJORAS.md",
+    "FUTURES.md",
+    "FUTURES.es.md",
     "LICENSE"
   ],
   "publishConfig": {

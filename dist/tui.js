@@ -11,10 +11,12 @@ import { createSignal } from "solid-js";
 import { BalanceError, fetchBalance, formatMoney, isBalanceCache, primaryEntry, resolveApiKey } from "./balance.js";
 import { billingState, countdown, formatChangeTime, holidayCalendarStatus, holidayFor, nextPeakChange } from "./peak.js";
 import { retryDelay } from "./retry.js";
+import { readPluginVersion } from "./version.js";
 const REFRESH_MS = 60_000;
 const REFRESH_JITTER_MS = 5_000;
 const CLOCK_MS = 30_000;
 const CACHE_KEY = "opencode-deepseek-balance.balance";
+const LABEL_WIDTH = 10;
 function formatAge(updatedAt, now) {
   const seconds = Math.max(0, Math.floor((now.getTime() - updatedAt) / 1_000));
   if (seconds < 60) return `${seconds}s ago`;
@@ -40,6 +42,7 @@ function errorLabel(error) {
   return labels[error.kind];
 }
 const tui = async api => {
+  const version = readPluginVersion();
   let cached;
   try {
     cached = api.kv.get(CACHE_KEY);
@@ -201,7 +204,7 @@ const tui = async api => {
           if (current.status === "stale") {
             return current.error ? `${errorLabel(current.error)} · ${age}` : `cached · ${age}`;
           }
-          return `updated ${age}`;
+          return version ? `${version}` : `updated ${age}`;
         };
         const balanceText = () => {
           const current = state();
@@ -229,11 +232,17 @@ const tui = async api => {
         const peakColor = () => billing() === "peak" ? api.theme.current.warning : api.theme.current.success;
         const price = () => {
           const mode = billing();
-          const base = mode === "peak" ? "2× rate" : mode === "holiday" ? "off-peak all day" : "50% off";
+          return mode === "peak" ? "2× rate" : mode === "holiday" ? "off-peak all day" : "50% off";
+        };
+        const next = () => {
           const change = nextPeakChange(now());
-          if (!change) return base;
-          const target = billingState(change) === "peak" ? "peak" : "off-peak";
-          return `${base} · ${target} in ${countdown(change, now())} · ${formatChangeTime(change, now())}`;
+          if (!change) return undefined;
+          const peak = billingState(change) === "peak";
+          return {
+            label: peak ? "→ Peak" : "→ Off-peak",
+            color: peak ? api.theme.current.warning : api.theme.current.success,
+            detail: `${countdown(change, now())} · ${formatChangeTime(change, now())}`
+          };
         };
         const calendarNote = () => {
           const status = holidayCalendarStatus(now());
@@ -274,22 +283,52 @@ const tui = async api => {
           _$setProp(_el$7, "gap", 1);
           _$setProp(_el$7, "flexShrink", 0);
           _$insertNode(_el$8, _$createTextNode(`DeepSeek`));
+          _$setProp(_el$8, "width", 10);
           _$insert(_el$0, balanceText);
           _$insertNode(_el$1, _el$10);
           _$insertNode(_el$1, _el$11);
           _$setProp(_el$1, "flexDirection", "row");
           _$setProp(_el$1, "gap", 1);
           _$setProp(_el$1, "flexShrink", 0);
+          _$setProp(_el$10, "width", 10);
           _$insert(_el$10, peakLabel);
           _$insert(_el$11, price);
+          _$insert(_el$, () => {
+            const change = next();
+            if (!change) return null;
+            return (() => {
+              var _el$12 = _$createElement("box"),
+                _el$13 = _$createElement("text"),
+                _el$14 = _$createElement("text");
+              _$insertNode(_el$12, _el$13);
+              _$insertNode(_el$12, _el$14);
+              _$setProp(_el$12, "flexDirection", "row");
+              _$setProp(_el$12, "gap", 1);
+              _$setProp(_el$12, "flexShrink", 0);
+              _$setProp(_el$13, "width", 10);
+              _$insert(_el$13, () => change.label);
+              _$insert(_el$14, () => change.detail);
+              _$effect(_p$ => {
+                var _v$7 = change.color,
+                  _v$8 = api.theme.current.textMuted;
+                _v$7 !== _p$.e && (_p$.e = _$setProp(_el$13, "fg", _v$7, _p$.e));
+                _v$8 !== _p$.t && (_p$.t = _$setProp(_el$14, "fg", _v$8, _p$.t));
+                return _p$;
+              }, {
+                e: undefined,
+                t: undefined
+              });
+              return _el$12;
+            })();
+          }, null);
           _$insert(_el$, (() => {
             var _c$ = _$memo(() => !!calendarNote());
             return () => _c$() ? (() => {
-              var _el$12 = _$createElement("text");
-              _$setProp(_el$12, "opacity", 0.8);
-              _$insert(_el$12, calendarNote);
-              _$effect(_$p => _$setProp(_el$12, "fg", api.theme.current.warning, _$p));
-              return _el$12;
+              var _el$15 = _$createElement("text");
+              _$setProp(_el$15, "opacity", 0.8);
+              _$insert(_el$15, calendarNote);
+              _$effect(_$p => _$setProp(_el$15, "fg", api.theme.current.warning, _$p));
+              return _el$15;
             })() : null;
           })(), null);
           _$effect(_p$ => {

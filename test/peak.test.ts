@@ -102,6 +102,7 @@ test("formatChangeTime omits the weekday for the same local day", () => {
     timeZone: "UTC",
   })
   assert.match(sameDay, /01:00/)
+  assert.doesNotMatch(sameDay, /AM|PM|a\.m\.|p\.m\./i)
   assert.doesNotMatch(sameDay, /Mon|Tue/)
 
   const nextDay = formatChangeTime(new Date(Date.UTC(2026, 9, 27, 1, 0)), from, {
